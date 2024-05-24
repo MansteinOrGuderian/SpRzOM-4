@@ -101,10 +101,6 @@ std::string Galois_Field_NB::return_polynomial_as_binary_string() const {
 //	return out;
 //}
 
-//std::vector<std::bitset<173>> Galois_Field_NB::calculation_of_multiplication_matrix() {
-//
-//}
-
 Galois_Field_NB Galois_Field_NB::operator+(const Galois_Field_NB& Right_polynomial) {
 	Galois_Field_NB result_of_summing = this->array_of_coefficients_of_polynomial ^ Right_polynomial.array_of_coefficients_of_polynomial; // ^ is XOR == + mod 2
 	return result_of_summing;
@@ -114,4 +110,41 @@ unsigned int Galois_Field_NB::trace() {
 	unsigned int trace = (this->array_of_coefficients_of_polynomial.count()) % 2; // trace in F_2 can be 0 or 1
 	return trace; // in Field F_p with Normal Basis trace of element is just sum of its components by modulo p
 }
+
+Galois_Field_NB Galois_Field_NB::square_polynomial() {
+	Galois_Field_NB square_polynomial = *this; // cyclic right shift
+	square_polynomial = ((square_polynomial.array_of_coefficients_of_polynomial >> 1) | (square_polynomial.array_of_coefficients_of_polynomial << (size_of_field - 1)));
+	return square_polynomial; // shift right "vector" left, and bitwise OR with right "vector", shifted on (size_of_field - 1) -> In summary squaring is cyclic shift right
+}
+//std::vector<std::bitset<173>> Galois_Field_NB::calculation_of_multiplication_matrix() {
+//
+//}
+
+Galois_Field_NB Galois_Field_NB::polynomimal_to_power(const Galois_Field_NB& degree) { // degree is number
+	Galois_Field_NB polynomial_to_power = *this;
+	Galois_Field_NB result_of_getting_to_power("1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", 0); // neutral element by multiplication is 1, 1 in NB is (1, 1, ... 1, 1) _ 173 times
+	unsigned int current_index = 0; 
+	while (current_index < size_of_field) {
+		if (degree.array_of_coefficients_of_polynomial.test(current_index) == 1)
+			result_of_getting_to_power = polynomial_to_power * result_of_getting_to_power;
+		polynomial_to_power = polynomial_to_power.square_polynomial();
+		current_index++;
+	}
+	return result_of_getting_to_power;
+}
+
+bool Galois_Field_NB::operator==(const Galois_Field_NB& Right_polynomial) {
+	return (this->array_of_coefficients_of_polynomial == Right_polynomial.array_of_coefficients_of_polynomial);
+}
+
+bool Galois_Field_NB::operator!=(const Galois_Field_NB& Right_polynomial) {
+	return !(*this == Right_polynomial);
+}
+
+Galois_Field_NB Galois_Field_NB::cyclic_shift_right_coefficients_of_polynomial(unsigned int number_of_position_to_shift) {
+	Galois_Field_NB result_of_shifting = *this;
+	result_of_shifting = ((result_of_shifting.array_of_coefficients_of_polynomial >> number_of_position_to_shift) | (result_of_shifting.array_of_coefficients_of_polynomial << (size_of_field - number_of_position_to_shift)));
+	return result_of_shifting;
+}
+
 

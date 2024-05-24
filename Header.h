@@ -20,7 +20,12 @@ public:
 	std::string return_polynomial_as_hex_string() const;
 	std::string return_polynomial_as_binary_string() const;
 	unsigned int trace();
+	Galois_Field_NB square_polynomial();
 	Galois_Field_NB operator+(const Galois_Field_NB&);
+	bool operator==(const Galois_Field_NB&);
+	bool operator!=(const Galois_Field_NB&);
+	Galois_Field_NB polynomimal_to_power(const Galois_Field_NB& degree);
 	//std::vector<std::bitset<173>> calculation_of_multiplication_matrix();
+	Galois_Field_NB cyclic_shift_right_coefficients_of_polynomial(unsigned int number_of_position_to_shift);
 };
 
