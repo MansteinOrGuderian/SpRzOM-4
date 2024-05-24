@@ -89,6 +89,7 @@ std::string Galois_Field_NB::return_polynomial_as_binary_string() const {
 	return polynomial_as_binary_string;
 }
 
+
 //std::ostream& operator<< (std::ostream& out, const Galois_Field_NB& Data) { // check later if is changed to reverse order 
 //	out << "Polynomial is:\t"; // << Data.array_of_coefficients_of_polynomial;
 //	int degree = Data.size_of_field - 1;
@@ -99,3 +100,18 @@ std::string Galois_Field_NB::return_polynomial_as_binary_string() const {
 //	}
 //	return out;
 //}
+
+//std::vector<std::bitset<173>> Galois_Field_NB::calculation_of_multiplication_matrix() {
+//
+//}
+
+Galois_Field_NB Galois_Field_NB::operator+(const Galois_Field_NB& Right_polynomial) {
+	Galois_Field_NB result_of_summing = this->array_of_coefficients_of_polynomial ^ Right_polynomial.array_of_coefficients_of_polynomial; // ^ is XOR == + mod 2
+	return result_of_summing;
+}
+
+unsigned int Galois_Field_NB::trace() {
+	unsigned int trace = (this->array_of_coefficients_of_polynomial.count()) % 2; // trace in F_2 can be 0 or 1
+	return trace; // in Field F_p with Normal Basis trace of element is just sum of its components by modulo p
+}
+

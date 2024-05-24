@@ -5,6 +5,7 @@
 #include <functional> // for tracking time
 #include <vector> // for tracking time
 
+
 struct Galois_Field_NB {
 private:
 	static const int size_of_field = 173;
@@ -18,4 +19,8 @@ public:
 	//friend std::ostream& operator<<(std::ostream&, const Galois_Field_NB&); // output polynomial as polynomial
 	std::string return_polynomial_as_hex_string() const;
 	std::string return_polynomial_as_binary_string() const;
+	unsigned int trace();
+	Galois_Field_NB operator+(const Galois_Field_NB&);
+	//std::vector<std::bitset<173>> calculation_of_multiplication_matrix();
 };
+
