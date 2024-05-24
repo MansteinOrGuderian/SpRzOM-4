@@ -116,13 +116,23 @@ Galois_Field_NB Galois_Field_NB::square_polynomial() {
 	square_polynomial = ((square_polynomial.array_of_coefficients_of_polynomial >> 1) | (square_polynomial.array_of_coefficients_of_polynomial << (size_of_field - 1)));
 	return square_polynomial; // shift right "vector" left, and bitwise OR with right "vector", shifted on (size_of_field - 1) -> In summary squaring is cyclic shift right
 }
-//std::vector<std::bitset<173>> Galois_Field_NB::calculation_of_multiplication_matrix() {
-//
-//}
+
+
+int mod_pow2(int exponent, int mod) {
+	int result = 1;
+	for (int i = 0; i < exponent; ++i) {
+		result = (result << 1) % mod;
+	}
+	return result;
+}
+
+std::vector<std::bitset<173>> Galois_Field_NB::calculation_of_multiplication_matrix() {
+
+}
 
 Galois_Field_NB Galois_Field_NB::polynomimal_to_power(const Galois_Field_NB& degree) { // degree is number
 	Galois_Field_NB polynomial_to_power = *this;
-	Galois_Field_NB result_of_getting_to_power("1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", 0); // neutral element by multiplication is 1, 1 in NB is (1, 1, ... 1, 1) _ 173 times
+	Galois_Field_NB result_of_getting_to_power("1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", 0); // neutral element by multiplication is 1, 1 in NB is (1, 1, ... 1, 1) 173 times == 1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 	unsigned int current_index = 0; 
 	while (current_index < size_of_field) {
 		if (degree.array_of_coefficients_of_polynomial.test(current_index) == 1)
@@ -148,3 +158,33 @@ Galois_Field_NB Galois_Field_NB::cyclic_shift_right_coefficients_of_polynomial(u
 }
 
 
+Galois_Field_NB Galois_Field_NB::operator*(const Galois_Field_NB& Right_polynomial) { // (u <<< i) * L * (v <<< i)^T
+	std::vector<std::bitset<size_of_field>> multiplication_matrix = calculation_of_multiplication_matrix();
+	Galois_Field_NB result_of_multiplication; 
+	unsigned int current_index = 0;
+	while (current_index < size_of_field) {
+		Galois_Field_NB left_temp_polynomial, right_temp_polynomial, left_mult_on_multiplication_matrix;
+		left_temp_polynomial.array_of_coefficients_of_polynomial = ((this->array_of_coefficients_of_polynomial << current_index) | (this->array_of_coefficients_of_polynomial >> (size_of_field - current_index)));
+		unsigned int current_row = 0;
+		while (current_row < size_of_field){ // u * L
+			if (left_temp_polynomial.array_of_coefficients_of_polynomial.test(current_row) == 1) {
+				unsigned int current_column = 0;
+				while (current_column < size_of_field) {
+					if (multiplication_matrix[current_row].test(current_column) == 1) // if bit 1 was in u and in L matrix -> in  u * L also set 1
+						left_mult_on_multiplication_matrix.array_of_coefficients_of_polynomial.flip(current_column);
+					current_column++;
+				}
+			}
+			current_row++;
+		}
+		right_temp_polynomial.array_of_coefficients_of_polynomial = ((Right_polynomial.array_of_coefficients_of_polynomial << current_index) | (Right_polynomial.array_of_coefficients_of_polynomial >> (size_of_field - current_index)));
+		unsigned int current_row = 0;  
+		while (current_row < size_of_field) {
+			if (left_mult_on_multiplication_matrix.array_of_coefficients_of_polynomial[current_row] == 1 && right_temp_polynomial.array_of_coefficients_of_polynomial[current_row] == 1)
+				result_of_multiplication.array_of_coefficients_of_polynomial.flip(current_row);
+			current_row++;
+		}
+		current_index++;
+	}
+	return result_of_multiplication;
+}
