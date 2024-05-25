@@ -36,3 +36,5 @@ public:
 	Galois_Field_NB inverse_element();
 	static void calculation_of_multiplication_matrix();
 };
+
+std::string convertToLowercase(const std::string& input_string);

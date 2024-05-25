@@ -108,7 +108,6 @@ std::string Galois_Field_NB::return_polynomial_as_binary_string() const {
 	return polynomial_as_binary_string;
 }
 
-
 std::ostream& operator<< (std::ostream& out, const Galois_Field_NB& Data) {
 	out << "Polynomial is:\t";
 	int degree = Data.size_of_field - 1;
@@ -234,33 +233,6 @@ unsigned int amount_of_zeros__in_binary_representation_before_significant_digit(
 	return amount_of_leading_zeros;
 }
 
-//Galois_Field_NB Galois_Field_NB::inverse_element(){
-//	if (*this == Galois_Field_NB("0", 0))
-//		throw std::exception("Inverse element to null in field didn't exist!"); // In field all elements, exept null, have inverse regard operation of multiplication
-//	int index_of_first_significant_digit = 31 - amount_of_zeros__in_binary_representation_before_significant_digit(size_of_field - 1);
-//	Galois_Field_NB beta_inversed_element = *this;
-//	Galois_Field_NB temp_beta;
-//	unsigned int index_of_beta = 1;
-//	int current_index = index_of_first_significant_digit - 1;
-//	while (current_index >= 0) {
-//		temp_beta = beta_inversed_element;
-//		unsigned int index_pow_of_two = 0;
-//		while (index_pow_of_two < index_of_beta) {
-//			beta_inversed_element = beta_inversed_element.square_polynomial();
-//			index_pow_of_two++;
-//		}
-//		beta_inversed_element = beta_inversed_element * temp_beta;
-//		index_of_beta *= 2;
-//		if (((size_of_field - 1) & (1 << current_index)) == 1) { 
-//			beta_inversed_element = (beta_inversed_element.square_polynomial() * *this);
-//			index_of_beta++;
-//		}
-//		current_index--;
-//	}
-//	beta_inversed_element = beta_inversed_element.square_polynomial();
-//	return beta_inversed_element;
-//}
-
 Galois_Field_NB Galois_Field_NB::inverse_element() {
 	if (*this == Galois_Field_NB("0", 0))
 		throw std::exception("Inverse element to null in field didn't exist!"); // In field all elements, exept null, have inverse regard operation of multiplication
@@ -286,4 +258,11 @@ Galois_Field_NB Galois_Field_NB::inverse_element() {
 	}
 	beta_is_inversed_element = beta_is_inversed_element.square_polynomial();
 	return beta_is_inversed_element;
+}
+
+std::string convertToLowercase(const std::string& entered_string) {
+	std::string result = "";
+	for (char current_symbol : entered_string)
+		result += tolower(current_symbol);
+	return result;
 }
