@@ -1,5 +1,24 @@
 #include "Header.h"
 
+double MeasureTime(std::function<void()> operation, unsigned int amount_of_measurements) {
+	double* time_for_all_tryes = new double[amount_of_measurements + 1]{};
+	int current_measurement = 0;
+	while (current_measurement < amount_of_measurements) {
+		auto start_time = std::chrono::high_resolution_clock::now();
+		operation();  // Executing operation
+		auto end_time = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<double> elapsed_time = end_time - start_time;
+		time_for_all_tryes[current_measurement] = elapsed_time.count();
+		std::cout << time_for_all_tryes[current_measurement] << '\n';
+		time_for_all_tryes[amount_of_measurements] += time_for_all_tryes[current_measurement];
+		current_measurement++;
+		std::cout << "Total:\t" << time_for_all_tryes[amount_of_measurements] << '\n';
+	}
+	double average_time = (time_for_all_tryes[amount_of_measurements] / amount_of_measurements);
+	delete[] time_for_all_tryes;
+	return average_time;
+}
+
 Galois_Field_NB Galois_Field_NB::convert_line_to_array_of_polynomial_coefficients(const std::string& line_with_coefficients, bool if_line_binary) {
 	if (if_line_binary == 1) {
 		std::string binary_line_with_each_coefficients = line_with_coefficients;
@@ -90,16 +109,16 @@ std::string Galois_Field_NB::return_polynomial_as_binary_string() const {
 }
 
 
-//std::ostream& operator<< (std::ostream& out, const Galois_Field_NB& Data) { // check later if is changed to reverse order 
-//	out << "Polynomial is:\t"; // << Data.array_of_coefficients_of_polynomial;
-//	int degree = Data.size_of_field - 1;
-//	int index_of_coefficient = Data.size_of_field - 1;
-//	while (degree >= 0) {
-//		out << Data.array_of_coefficients_of_polynomial[index_of_coefficient] << " * x^" << degree << (degree != 0 ? " + " : "\n\n");
-//		degree--; index_of_coefficient--;
-//	}
-//	return out;
-//}
+std::ostream& operator<< (std::ostream& out, const Galois_Field_NB& Data) {
+	out << "Polynomial is:\t";
+	int degree = Data.size_of_field - 1;
+	int index_of_coefficient = Data.size_of_field - 1;
+	while (degree >= 0) {
+		out << Data.array_of_coefficients_of_polynomial[index_of_coefficient] << " * x^" << degree << (degree != 0 ? " + " : "\n\n");
+		degree--; index_of_coefficient--;
+	}
+	return out;
+}
 
 Galois_Field_NB Galois_Field_NB::operator+(const Galois_Field_NB& Right_polynomial) {
 	Galois_Field_NB result_of_summing = this->array_of_coefficients_of_polynomial ^ Right_polynomial.array_of_coefficients_of_polynomial; // ^ is XOR == + mod 2

@@ -6,9 +6,9 @@
 #include <vector> // for tracking time
 
 
+double MeasureTime(std::function<void()> operation, unsigned int amount_of_measurements);
 const int size_of_matrix = 173;
 using Multiplication_matrix = std::vector<std::bitset<size_of_matrix>>;
-
 unsigned int two_in_degree_by_modulo_p(unsigned int degree, unsigned int modulo_p);
 
 struct Galois_Field_NB {
@@ -21,7 +21,7 @@ public:
 	Galois_Field_NB(const std::bitset<size_of_field>& entered_coefficients) : array_of_coefficients_of_polynomial(entered_coefficients) {};
 	Galois_Field_NB(const std::string& line_of_coefficients, bool if_binary_string_or_hex); // binary = 1, hex = 0
 	static Galois_Field_NB convert_line_to_array_of_polynomial_coefficients(const std::string&, bool if_binary_string_or_hex); // binary = 1, hex = 0
-	//friend std::ostream& operator<<(std::ostream&, const Galois_Field_NB&); // output polynomial as polynomial
+	friend std::ostream& operator<<(std::ostream&, const Galois_Field_NB&); // output polynomial as polynomial
 	std::string return_polynomial_as_hex_string() const;
 	std::string return_polynomial_as_binary_string() const;
 	unsigned int trace();
