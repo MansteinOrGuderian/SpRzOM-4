@@ -7,8 +7,12 @@ int main() {
 	Galois_Field_NB b("0edf130b2a5bf30a816c4131bcdb4523caef5480134", 0); // 43
 	Galois_Field_NB c("16cdef39cbdb4523caef5480134edf130b2a5bf30a8", 0); // 43 * 4 = 172
 	
-	std::cout << (a + b).return_polynomial_as_hex_string() << "\n\n"; // +
-	std::cout << (a * b).return_polynomial_as_hex_string() << "\n\n"; // +
-	std::cout << (a.square_polynomial()).return_polynomial_as_hex_string() << "\n\n"; // +
-	std::cout << (a.polynomimal_to_power(c)).return_polynomial_as_hex_string() << "\n\n"; // +
+
+
+	std::cout << "SUM:\t" << (a + b).return_polynomial_as_hex_string() << "\n\n";
+	std::cout << "Multiply:\t" << (a * b).return_polynomial_as_hex_string() << "\n\n";
+	std::cout << "Square:\t" << (a.square_polynomial()).return_polynomial_as_hex_string() << "\n\n";
+	std::cout << "Trace:\t" << a.trace() << "\n\n";
+	std::cout << "Inverse to a:\t" << (a.inverse_element().return_polynomial_as_hex_string()) << "\n\n";
+	std::cout << "Degree:\t" << (a.polynomimal_to_power(c)).return_polynomial_as_hex_string() << "\n\n";
 }

@@ -33,21 +33,6 @@ public:
 	Galois_Field_NB cyclic_shift_right_coefficients_of_polynomial(unsigned int number_of_position_to_shift);
 
 	Galois_Field_NB polynomimal_to_power(const Galois_Field_NB& degree);
-	
-	//static void calculation_of_multiplication_matrix() {
-	//	int modulo_p = 2 * size_of_field + 1;
-	//	int current_row = 0;
-	//	while (current_row < size_of_field) {
-	//		int current_column = 0;
-	//		while (current_column < size_of_field) {
-	//			int two_in_degree_of_rows = two_in_degree_by_modulo_p(current_row, modulo_p);
-	//			int two_in_degree_of_columns = two_in_degree_by_modulo_p(current_column, modulo_p);
-	//			if ((two_in_degree_of_rows + two_in_degree_of_columns) % modulo_p == 1 || (two_in_degree_of_rows + two_in_degree_of_columns + modulo_p) % modulo_p == 1 || ((modulo_p - two_in_degree_of_rows) + two_in_degree_of_columns) % modulo_p == 1 || ((modulo_p - two_in_degree_of_rows) - two_in_degree_of_columns + modulo_p) % modulo_p == 1)
-	//				multiplication_matrix[size_of_field - current_row - 1][size_of_field - current_column - 1] = 1;
-	//			current_column++;
-	//		}
-	//		current_row++;
-	//	}
-	//}
+	Galois_Field_NB inverse_element();
 	static void calculation_of_multiplication_matrix();
 };

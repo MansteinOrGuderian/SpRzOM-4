@@ -158,12 +158,11 @@ Galois_Field_NB Galois_Field_NB::operator*(const Galois_Field_NB& Right_polynomi
 	std::bitset<size_of_field> result_of_multiplication;
 	unsigned int current_index = 0;
 	while (current_index < size_of_field) {
-		std::bitset<size_of_field> left_temp = (array_of_coefficients_of_polynomial << current_index) | (array_of_coefficients_of_polynomial >> (size_of_field - current_index));
-		std::bitset<size_of_field> right_temp = (Right_polynomial.array_of_coefficients_of_polynomial << current_index) | (Right_polynomial.array_of_coefficients_of_polynomial >> (size_of_field - current_index));
+		std::bitset<size_of_field> left_temp_polynomial = (array_of_coefficients_of_polynomial << current_index) | (array_of_coefficients_of_polynomial >> (size_of_field - current_index));
 		std::bitset<size_of_field> left_mult_on_multiplication_matrix;
 		unsigned int current_row = 0;
 		while (current_row < size_of_field) {
-			if (left_temp.test(current_row)) {
+			if (left_temp_polynomial.test(current_row)) {
 				unsigned int current_column = 0;
 				while (current_column < size_of_field) {
 					if (multiplication_matrix[current_row].test(current_column))
@@ -173,47 +172,17 @@ Galois_Field_NB Galois_Field_NB::operator*(const Galois_Field_NB& Right_polynomi
 			}
 			current_row++;
 		}
-		unsigned int index = 0;
-		while (index < size_of_field) {
-			if (left_mult_on_multiplication_matrix.test(index) && right_temp.test(index))
+		std::bitset<size_of_field> right_temp_polynomial = (Right_polynomial.array_of_coefficients_of_polynomial << current_index) | (Right_polynomial.array_of_coefficients_of_polynomial >> (size_of_field - current_index));
+		current_row = 0;
+		while (current_row < size_of_field) {
+			if (left_mult_on_multiplication_matrix.test(current_row) && right_temp_polynomial.test(current_row))
 				result_of_multiplication.flip(size_of_field - current_index - 1);
-			index++;
+			current_row++;
 		}
 		current_index++;
 	}
 	return Galois_Field_NB(result_of_multiplication);
 }
-
-//Galois_Field_NB Galois_Field_NB::operator*(const Galois_Field_NB& Right_polynomial) { 
-//	//std::vector<std::bitset<size_of_field>> multiplication_matrix = calculation_of_multiplication_matrix();
-//	Galois_Field_NB result_of_multiplication; 
-//	unsigned int current_index = 0;
-//	while (current_index < size_of_field) {
-//		Galois_Field_NB left_temp_polynomial, right_temp_polynomial, left_mult_on_multiplication_matrix;
-//		left_temp_polynomial.array_of_coefficients_of_polynomial = ((this->array_of_coefficients_of_polynomial << current_index) | (this->array_of_coefficients_of_polynomial >> (size_of_field - current_index)));
-//		unsigned int current_row = 0;
-//		while (current_row < size_of_field){ // u * L
-//			if (left_temp_polynomial.array_of_coefficients_of_polynomial.test(current_row) == 1) {
-//				unsigned int current_column = 0;
-//				while (current_column < size_of_field) {
-//					if (multiplication_matrix[current_row].test(current_column) == 1) // if bit 1 was in u and in L matrix -> in  u * L also set 1
-//						left_mult_on_multiplication_matrix.array_of_coefficients_of_polynomial.flip(current_column);
-//					current_column++;
-//				}
-//			}
-//			current_row++;
-//		}
-//		right_temp_polynomial.array_of_coefficients_of_polynomial = ((Right_polynomial.array_of_coefficients_of_polynomial << current_index) | (Right_polynomial.array_of_coefficients_of_polynomial >> (size_of_field - current_index)));
-//		current_row = 0;  
-//		while (current_row < size_of_field) {
-//			if (left_mult_on_multiplication_matrix.array_of_coefficients_of_polynomial[current_row] == 1 && right_temp_polynomial.array_of_coefficients_of_polynomial[current_row] == 1)
-//				result_of_multiplication.array_of_coefficients_of_polynomial.flip(size_of_array - current_index - 1);
-//			current_row++;
-//		}
-//		current_index++;
-//	}
-//	return result_of_multiplication;
-//}
 
 void Galois_Field_NB::calculation_of_multiplication_matrix() {
 	unsigned int modulo_p = 2 * size_of_field + 1;
@@ -228,4 +197,74 @@ void Galois_Field_NB::calculation_of_multiplication_matrix() {
 		}
 		current_row++;
 	}
+}
+
+
+unsigned int amount_of_zeros__in_binary_representation_before_significant_digit(unsigned int decimal_number) { // auxiliary function to calculate inverse element
+	if (decimal_number == 0)
+		return 32;
+	unsigned int amount_of_leading_zeros = 0;
+	int current_bit = 31;
+	while (current_bit >= 0) {
+		if ((decimal_number & (1 << current_bit)) == 0)
+			amount_of_leading_zeros++;
+		else
+			break;
+		current_bit--;
+	}
+	return amount_of_leading_zeros;
+}
+
+//Galois_Field_NB Galois_Field_NB::inverse_element(){
+//	if (*this == Galois_Field_NB("0", 0))
+//		throw std::exception("Inverse element to null in field didn't exist!"); // In field all elements, exept null, have inverse regard operation of multiplication
+//	int index_of_first_significant_digit = 31 - amount_of_zeros__in_binary_representation_before_significant_digit(size_of_field - 1);
+//	Galois_Field_NB beta_inversed_element = *this;
+//	Galois_Field_NB temp_beta;
+//	unsigned int index_of_beta = 1;
+//	int current_index = index_of_first_significant_digit - 1;
+//	while (current_index >= 0) {
+//		temp_beta = beta_inversed_element;
+//		unsigned int index_pow_of_two = 0;
+//		while (index_pow_of_two < index_of_beta) {
+//			beta_inversed_element = beta_inversed_element.square_polynomial();
+//			index_pow_of_two++;
+//		}
+//		beta_inversed_element = beta_inversed_element * temp_beta;
+//		index_of_beta *= 2;
+//		if (((size_of_field - 1) & (1 << current_index)) == 1) { 
+//			beta_inversed_element = (beta_inversed_element.square_polynomial() * *this);
+//			index_of_beta++;
+//		}
+//		current_index--;
+//	}
+//	beta_inversed_element = beta_inversed_element.square_polynomial();
+//	return beta_inversed_element;
+//}
+
+Galois_Field_NB Galois_Field_NB::inverse_element() {
+	if (*this == Galois_Field_NB("0", 0))
+		throw std::exception("Inverse element to null in field didn't exist!"); // In field all elements, exept null, have inverse regard operation of multiplication
+	int index_of_first_significant_digit = 31 - amount_of_zeros__in_binary_representation_before_significant_digit(size_of_field - 1);
+	Galois_Field_NB beta_is_inversed_element = *this;
+	Galois_Field_NB temp_beta;
+	unsigned int index_of_beta = 1;
+	int current_index = index_of_first_significant_digit - 1;
+	while (current_index >= 0) {  // Inverse element in NB calculated with Itoh-Tsujii algorithm
+		temp_beta = beta_is_inversed_element;
+		unsigned int index_pow_of_two = 0;
+		while (index_pow_of_two < index_of_beta) {
+			beta_is_inversed_element = beta_is_inversed_element.square_polynomial();
+			index_pow_of_two++;
+		}
+		beta_is_inversed_element = beta_is_inversed_element * temp_beta;
+		index_of_beta *= 2;
+		if ((size_of_field - 1) & (1 << current_index)) { // check, if in m [i] == 1
+			beta_is_inversed_element = beta_is_inversed_element.square_polynomial() * *this;
+			index_of_beta++;
+		}
+		current_index--;
+	}
+	beta_is_inversed_element = beta_is_inversed_element.square_polynomial();
+	return beta_is_inversed_element;
 }
